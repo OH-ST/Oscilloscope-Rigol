@@ -215,7 +215,7 @@ class rigol_ds1054z:
 		self.oscilloscope.write(':ACQ:MDEP ' + str(int(memory_depth)))
 		print("Acquire memory depth set to {} samples".format(memory_depth))
 
-	def write_waveform_data(self, channel=1, filename=''):
+	def write_waveform_data(self, channel=1, filename=None):
 		self.oscilloscope.write(':WAV:SOUR CHAN' + str(channel))
 		time.sleep(1)
 		self.oscilloscope.write(':WAV:MODE NORM')
@@ -225,18 +225,22 @@ class rigol_ds1054z:
 		readinglines = fullreading.splitlines()
 		mdepth = int(readinglines[0])
 		num_reads = int((mdepth / 15625) +1)
-		if (filename == ''):
-			filename = "rigol_waveform_data_channel_" + str(channel) + "_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") +".csv"
-		fid = open(filename, 'w')
-		print ("Started saving waveform data for channel " + str(channel) + " " + str(mdepth) + " samples to filename " + '\"' + filename + '\"')
+		datas = []
 		for read_loop in range(0,num_reads):
 			self.oscilloscope.write(':WAV:DATA?')
-			fullreading = self.oscilloscope.read_raw()
+			fullreading = self.oscilloscope.read_raw()[11:]
 			readinglines = fullreading.splitlines()
 			reading = str(readinglines[0])
-			reading = reading.replace(",", "\n")
-			fid.write(reading)
-		fid.close()
+			data = reading.split(",")
+			for p in data:
+				datas.append(p.strip("b\'"))
+			datas.append("\n")
+		if filename:
+			with open(filename, 'w') as f:
+				for point in datas:
+					if point != "\n":
+						f.write(point+'\n')
+		return datas
 
 	def channel_enabled(self, channel=1):
 		self.oscilloscope.write(':CHAN{}:DISP?'.format(channel))
