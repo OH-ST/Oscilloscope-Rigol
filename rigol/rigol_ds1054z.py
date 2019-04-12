@@ -13,7 +13,6 @@ class rigol_ds1054z:
 		# insert your device here
 		# resources.list_resources() will show you the USB resource to put below
 		visa_resource = list(filter(lambda x: 'USB' in x, resources.list_resources()))[0]
-		print(visa_resource)
 		self.oscilloscope = resources.open_resource(visa_resource)
 		self.debug = debug
 
@@ -238,3 +237,7 @@ class rigol_ds1054z:
 			reading = reading.replace(",", "\n")
 			fid.write(reading)
 		fid.close()
+
+	def channel_enabled(self, channel=1):
+		self.oscilloscope.write(':CHAN{}:DISP?'.format(channel))
+		return True if int(self.oscilloscope.read()) == 1 else False
