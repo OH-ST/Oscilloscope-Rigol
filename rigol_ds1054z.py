@@ -215,7 +215,7 @@ class rigol_ds1054z:
 		print "Acquire memory depth set to %d samples" % memory_depth
 
 	def write_waveform_data(self, channel=1, filename=''):
-		self.oscilloscope.write(':WAV:SOUR: CHAN' + str(channel))
+		self.oscilloscope.write(':WAV:SOUR CHAN' + str(channel))
 		time.sleep(1)
 		self.oscilloscope.write(':WAV:MODE NORM')
 		self.oscilloscope.write(':WAV:FORM ASC')
