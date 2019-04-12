@@ -12,7 +12,9 @@ class rigol_ds1054z:
 		resources = visa.ResourceManager('@py')
 		# insert your device here
 		# resources.list_resources() will show you the USB resource to put below
-		self.oscilloscope = resources.open_resource('USB0::6833::1230::DS1ZAXXXXXX::0::INSTR')
+		visa_resource = list(filter(lambda x: 'USB' in x, resources.list_resources()))[0]
+		print(visa_resource)
+		self.oscilloscope = resources.open_resource(visa_resource)
 		self.debug = debug
 
 	def print_info(self):
