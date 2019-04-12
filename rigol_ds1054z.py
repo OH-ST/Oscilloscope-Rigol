@@ -21,7 +21,7 @@ class rigol_ds1054z:
 		self.oscilloscope.write('*IDN?')
 		fullreading = self.oscilloscope.read_raw()
 		readinglines = fullreading.splitlines()
-		print("Scope information: " + readinglines[0])
+		print("Scope information: " + str(readinglines[0]))
 	
 	class measurement:
 		def __init__(self, name='', description='', command='', unit='', return_type=''):
@@ -131,11 +131,11 @@ class rigol_ds1054z:
 		
 	def close(self):
 		self.oscilloscope.close()
-		print "Closed USB session to oscilloscope"
+		print("Closed USB session to oscilloscope")
 		
 	def reset(self):
 		self.oscilloscope.write('*RST')
-		print "Reset oscilloscope"
+		print("Reset oscilloscope")
 		time.sleep(5)
 		
 	# probe should either be 10.0 or 1.0, per the setting on the physical probe
@@ -214,7 +214,7 @@ class rigol_ds1054z:
 	# the int conversion is needed for scientific notation values
 	def setup_mem_depth(self, memory_depth=12e6):
 		self.oscilloscope.write(':ACQ:MDEP ' + str(int(memory_depth)))
-		print "Acquire memory depth set to %d samples" % memory_depth
+		print("Acquire memory depth set to {} samples".format(memory_depth))
 
 	def write_waveform_data(self, channel=1, filename=''):
 		self.oscilloscope.write(':WAV:SOUR CHAN' + str(channel))
@@ -225,10 +225,10 @@ class rigol_ds1054z:
 		fullreading = self.oscilloscope.read_raw()
 		readinglines = fullreading.splitlines()
 		mdepth = int(readinglines[0])
-		num_reads = (mdepth / 15625) +1
+		num_reads = int((mdepth / 15625) +1)
 		if (filename == ''):
 			filename = "rigol_waveform_data_channel_" + str(channel) + "_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") +".csv"
-		fid = open(filename, 'wb')
+		fid = open(filename, 'w')
 		print ("Started saving waveform data for channel " + str(channel) + " " + str(mdepth) + " samples to filename " + '\"' + filename + '\"')
 		for read_loop in range(0,num_reads):
 			self.oscilloscope.write(':WAV:DATA?')
