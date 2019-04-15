@@ -128,6 +128,10 @@ class rigol_ds1054z:
 		print ("Wrote screen capture to filename " + '\"' + filename + '\"')
 		time.sleep(5)
 		
+	def open(self):
+		self.oscilloscope.open()
+		print("Opened USB session to oscilloscope")
+
 	def close(self):
 		self.oscilloscope.close()
 		print("Closed USB session to oscilloscope")
